@@ -1,0 +1,151 @@
+# Brand rebrand specification
+# This is the single source of truth for the rebrand.
+# To run a different rebrand, edit this file and swap the assets in this folder.
+
+old_brand:
+  name: "BSI Learning"
+  # Common variants to also catch. Listed in priority order — longer/more
+  # specific variants come first so they match before shorter ones (which
+  # might be substrings of the longer ones). The "BSIL" abbreviation is
+  # ordered after "BSILearning" so the latter consumes its substring first.
+  name_variants:
+    - "BSI Learning Institute Pty Ltd"  # appears in older copyright lines
+    - "BSI Learning Pty Ltd"
+    - "BSI Learning Pty. Ltd."
+    - "BSILearning"
+    - "B.S.I. Learning"
+    - "BSIL"                            # abbreviation, e.g. "permission of BSIL"
+  # Old footer regex. The year is left flexible because real-world docs
+  # have all of: "2021", "2020", "2019", and even malformed years like
+  # "201" (a typo seen in BSBCMM511 v1.0). Allow 2-4 digits for the year.
+  footer_pattern: '©\s*BSI\s*Learning\s*\d{2,4}\s*\|\s*RTO\s*21371'
+  # Old hex colours that appear in styles.xml / hardcoded fills.
+  # BSI Learning has had two brand-palette eras across this document stack:
+  #
+  #   Older era (pre-2020 docs):
+  #     #000099 (deep blue), #000066 (dark navy)
+  #     #254061 (navy banner — used in cover-page VML shapes)
+  #     #F7941E (orange),    #E36C0A (darker orange)
+  #
+  #   Newer era (2020+ docs, refresh palette):
+  #     #003469 (navy),      #00264E (dark navy)
+  #     #DE761C (orange),    #BF4800 (darker orange)
+  #     #FF9655 (light orange), #88AEF3 (light blue tint)
+  colours:
+    # Older era
+    - "000099"
+    - "000066"
+    - "254061"
+    - "F7941E"
+    - "E36C0A"
+    # Newer era
+    - "003469"
+    - "00264E"
+    - "DE761C"
+    - "BF4800"
+    - "FF9655"
+    - "88AEF3"
+
+new_brand:
+  name: "aEX Institute"
+  # Footer to insert. Note: RTO 21371 is preserved.
+  footer: "© aEX Institute 2026 | RTO 21371"
+  # Theme XML to swap into word/theme/theme1.xml (aEX-correct palette)
+  theme_xml: "aex_theme1.xml"
+  # Logo replacement assets. The skill replaces embedded logos with a
+  # format-matched version: PNG-with-PNG, SVG-with-SVG, EMF-with-EMF.
+  # This preserves Word's relationship integrity (no need to rewrite
+  # _rels XML to change content types).
+  #
+  # The EMF replacement uses the WIDE "aEX Institute" wordmark in forest
+  # green. This matches the aspect ratio of older BSI Learning docs that
+  # used the wide "bsi learning" wordmark (~4:1 ratio). The square monogram
+  # would get distorted when stretched to fit a wide image placeholder.
+  logos:
+    full_colour_png: "aex_logo.png"        # square lime monogram (newer docs)
+    full_colour_svg: "aex_logo.svg"        # square lime monogram (newer docs)
+    full_colour_emf: "aex_logo.emf"        # WIDE green wordmark (older docs)
+    monogram_svg: "aex_monogram.svg"
+  # Colour replacement map: old hex → new hex (uppercase, no #).
+  # Map both BSI palette eras to the aEX palette.
+  colour_map:
+    # Older era
+    "000099": "194641"  # deep blue → forest green
+    "000066": "194641"  # dark navy → forest green
+    "254061": "194641"  # navy banner (VML cover-page shapes) → forest green
+    "F7941E": "E1E146"  # orange → lime
+    "E36C0A": "E1E146"  # darker orange → lime
+    # Newer era
+    "003469": "194641"  # navy → forest green
+    "00264E": "194641"  # darker navy → forest green
+    "DE761C": "E1E146"  # orange → lime
+    "BF4800": "E1E146"  # darker orange → lime
+    "FF9655": "E1E146"  # light orange → lime
+    "88AEF3": "194641"  # light blue tint → forest green
+  # Old logo reference for perceptual-hash matching.
+  old_logo_reference: "old_bsi_logo.png"
+
+# Things the rebrander MUST NOT change, even if they match.
+# These protect RTO compliance metadata and historical records.
+preserve:
+  # Regex patterns; matches are wrapped in a sentinel so search/replace skips them
+  text_patterns:
+    # Unit codes: e.g. BSBWHS411, FSKNUM017, CHCAGE001, BSBCMM511.
+    # Allow up to 8 letters before the digits to handle longer codes
+    # like BSBCMM (training-package + subject prefix concatenated).
+    - '\b[A-Z]{3,8}\d{2,3}[A-Z]?\b'
+    # Qualification codes: e.g. BSB30120, CHC30121
+    - '\bBSB\d{5,6}\b'
+    - '\bCHC\d{5,6}\b'
+    - '\bFSK\d{5,6}\b'
+    - '\bCPP\d{5,6}\b'
+    - '\bTAE\d{5,6}\b'
+    # Training package references
+    - '\bTraining Package\b'
+    - '\bASQA\b'
+    - '\btraining\.gov\.au\b'
+    - '\btga\.gov\.au\b'
+    # Standards for RTOs
+    - 'Standards for RTOs'
+    - 'Clause \d+(\.\d+)*'
+    # ABN
+    - 'ABN\s*\d{2}\s*\d{3}\s*\d{3}\s*\d{3}'
+    # RTO code
+    - 'RTO\s*21371'
+    # Historical version-history author entries — these document who
+    # authored/reviewed the document under the OLD brand and must be
+    # preserved as historical record:
+    #   * "BSI Learning Curriculum" — historical department/role name
+    #   * "BSI Learning (Name)" — historical individual author attribution
+    - 'BSI Learning Curriculum'
+    - 'BSI Learning \([^)]+\)'
+  # Version history table cells: rows where the Author column references
+  # historical staff/curriculum names should be preserved as historical record.
+  # The patterns above cover the two common author-attribution shapes; if
+  # the user has other historical author phrases they want preserved, add
+  # them here. The cutoff date below is informational only — see
+  # references/safety-carveouts.md for the spot-check workflow for any
+  # version-history rows the regex carveouts don't catch.
+  version_history_cutoff_date: "2026-01-01"
+
+# Behaviour tuning
+options:
+  # If True, also map Word theme accent slots so accent1=Lime, accent4=Green
+  # (already correct in the bundled aex_theme1.xml; left here for future rebrands)
+  swap_theme_xml: true
+  # If True, scan word/media/ images and replace those that match old_logo_reference
+  swap_logo_images: true
+  # If True, also detect and swap EMF logos (older Word docs use EMF for
+  # vector graphics). EMF detection requires LibreOffice and is slower —
+  # set False if not needed. Only EMFs under emf_size_limit_bytes are
+  # rendered for hashing. Logos are typically a few hundred KB; very large
+  # EMFs are content images / scanned diagrams — capping the size keeps
+  # batch runs fast (each render is ~1-2s).
+  swap_emf_logos: true
+  emf_size_limit_bytes: 524288  # 512 KB
+  # Perceptual hash distance threshold (0=identical, 64=opposite). 14 is moderate.
+  logo_match_threshold: 14
+  # If True, replace hardcoded brand colours in styles.xml, document.xml, headers, footers
+  swap_colours: true
+  # If True, replace text occurrences of old name → new name with safety carveouts
+  swap_text: true

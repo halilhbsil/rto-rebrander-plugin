@@ -1,0 +1,19 @@
+{
+  "name": "aex-internal",
+  "description": "Internal aEX Institute plugin marketplace. Hosts RTO document tooling and related staff utilities. Not for external distribution.",
+  "owner": {
+    "name": "aEX Institute",
+    "email": "halil.houssein@aexinstitute.com.au"
+  },
+  "plugins": [
+    {
+      "name": "rto-rebrander",
+      "source": "./plugins/rto-rebrander",
+      "description": "Rebrand BSI Learning RTO documents (.docx/.pptx/.pdf) to aEX Institute branding while preserving compliance metadata.",
+      "version": "1.3.0",
+      "author": {
+        "name": "aEX Institute"
+      }
+    }
+  ]
+}
