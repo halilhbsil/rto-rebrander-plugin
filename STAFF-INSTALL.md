@@ -31,26 +31,22 @@ You **do not** need a GitHub account. You **do not** need to know any commands.
 
 The installer will:
 - Check if you have Python 3.10+, and install it for you if you don't (this can take a minute)
+- Check that Claude Code Desktop is installed on your laptop
 - Remove any older version of the rebrander you may have had
-- Tell Claude Code where to find the new plugin
+- Register the aEX plugin marketplace with Claude Code
+- Download and enable the plugin
 
-When it's finished, you'll see a yellow message that says **"Setup complete!"** with one last step to do inside Claude Code.
+When it's finished, you'll see a yellow message that says **"All done!"** with one last instruction.
 
 ---
 
-## Step 2 — Install the plugin in Claude Code
+## Step 2 — Restart Claude Code Desktop
 
-1. **Open Claude Code Desktop** (if it's already open, close and reopen it first so it picks up the new settings).
-2. In the chat input area at the bottom, type or paste this single line and press Enter:
+1. If Claude Code Desktop is open, **close it completely** (right-click the system-tray icon → Quit if needed).
+2. Open it again.
+3. The very first time the plugin runs, you may see a brief message about *"installing Python packages"* — this is normal, takes about 30 seconds, and only happens once.
 
-```
-/plugin install rto-rebrander@aex-internal
-```
-
-3. Claude Code will download the plugin and confirm when it's done.
-4. **Close and reopen Claude Code Desktop** one more time. The first time the plugin runs, it quietly installs a few small Python helpers behind the scenes (you may see a one-time progress message — this only happens once).
-
-That's it. The rebrander is now ready to use.
+That's it. The rebrander is now installed and ready to use. **You did not need to type any commands.**
 
 ---
 

@@ -2,21 +2,10 @@
 REM ============================================================
 REM   RTO Rebrander - One-Click Installer (aEX Institute)
 REM
-REM   This file is self-contained. The PowerShell logic that does
-REM   the real work is embedded at the bottom of this same file.
-REM   The batch wrapper extracts it to a temp file, runs it, and
-REM   cleans up. No companion files needed.
-REM
-REM   How it works (for anyone reading the source):
-REM     - The line "# === PS_BODY_BEGINS ===" near the bottom is
-REM       a marker. Everything below it is PowerShell.
-REM     - The batch portion reads its own file (%~f0), finds the
-REM       marker line, and writes the PowerShell tail to a
-REM       randomly-named temp file under %TEMP%.
-REM     - It then invokes powershell.exe on that temp file and
-REM       deletes the temp afterwards.
-REM     - cmd.exe never sees the PowerShell content because of
-REM       the "exit /b" below the cleanup.
+REM   Self-contained: PowerShell logic embedded below a marker.
+REM   The batch wrapper extracts it to a temp file, runs it,
+REM   then deletes the temp. cmd.exe never sees the PowerShell
+REM   content because of the 'exit /b' before the marker.
 REM ============================================================
 
 setlocal
@@ -25,8 +14,11 @@ echo ============================================================
 echo   RTO Rebrander - aEX Institute Internal Installer
 echo ============================================================
 echo.
-echo This will set up the RTO Rebrander plugin on your laptop.
-echo It will install Python (if needed) and prepare Claude Code.
+echo This will install the RTO Rebrander plugin for Claude Code.
+echo It will:
+echo   - Install Python if needed
+echo   - Register the aEX marketplace with Claude Code
+echo   - Install the rto-rebrander plugin
 echo.
 echo You may see a security prompt - click Yes to continue.
 echo.
@@ -49,11 +41,9 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM Run the extracted PowerShell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PS_TMP%"
 set "PSEXIT=%ERRORLEVEL%"
 
-REM Cleanup
 del "%PS_TMP%" 2>nul
 
 echo.
@@ -64,16 +54,23 @@ pause >nul
 endlocal & exit /b %PSEXIT%
 
 REM ============================================================
-REM Everything below is PowerShell, not batch. cmd.exe never
-REM reaches it because of the "exit /b" above.
+REM Everything below is PowerShell, not batch.
 REM ============================================================
 
 # === PS_BODY_BEGINS ===
 # =============================================================
 #  RTO Rebrander - Installer (aEX Institute internal use)
 # =============================================================
-#  This script is normally embedded in install.bat and extracted
-#  to a temp file at runtime. See install.bat for the wrapper.
+#  This script is normally embedded in install.bat. The bat
+#  wrapper extracts it to a temp file and runs it.
+#
+#  Steps:
+#    1. Make sure Python 3.10+ is installed (winget install if not)
+#    2. Make sure Claude Code Desktop is installed (claude on PATH)
+#    3. Remove any old skill-style install
+#    4. Add the aEX marketplace via `claude plugin marketplace add`
+#    5. Install the plugin via `claude plugin install`
+#    6. Tell the staff member to restart Claude Code Desktop
 # =============================================================
 
 $ErrorActionPreference = "Stop"
@@ -111,7 +108,7 @@ if (Test-PythonOK) {
         winget install --id Python.Python.3.12 `
             --silent --accept-package-agreements --accept-source-agreements `
             --scope user | Out-Host
-        # Refresh PATH for this session so the new python is found below
+        # Refresh PATH for this session so the new python is visible
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" +
                     [System.Environment]::GetEnvironmentVariable("Path","User")
         if (Test-PythonOK) {
@@ -128,7 +125,21 @@ if (Test-PythonOK) {
 }
 
 # -------------------------------------------------------------
-# 2. Remove old skill-style install if it exists
+# 2. Verify Claude Code Desktop is installed
+# -------------------------------------------------------------
+Write-Step "Checking that Claude Code Desktop is installed"
+
+$claudeCmd = Get-Command claude -ErrorAction SilentlyContinue
+if (-not $claudeCmd) {
+    Write-Fail "The 'claude' command was not found on your laptop."
+    Write-Fail "Claude Code Desktop must be installed before running this installer."
+    Write-Fail "Please install it from https://claude.com/code first, then re-run install.bat."
+    exit 1
+}
+Write-OK "Found Claude Code at $($claudeCmd.Source)"
+
+# -------------------------------------------------------------
+# 3. Remove old skill-style install if it exists
 # -------------------------------------------------------------
 Write-Step "Cleaning up any previous skill-style install"
 
@@ -141,69 +152,53 @@ if (Test-Path $OldSkill) {
 }
 
 # -------------------------------------------------------------
-# 3. Register the marketplace in Claude Code settings.json
+# 4. Add the aEX marketplace to Claude Code
 # -------------------------------------------------------------
-Write-Step "Registering the aEX marketplace with Claude Code"
+Write-Step "Registering the aEX marketplace"
 
-$ClaudeDir   = Join-Path $env:USERPROFILE ".claude"
-$SettingsPath = Join-Path $ClaudeDir "settings.json"
-if (-not (Test-Path $ClaudeDir)) {
-    New-Item -ItemType Directory -Path $ClaudeDir | Out-Null
+$mpOutput = & claude plugin marketplace add $PluginRepo 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Fail "Could not register the marketplace. Output:"
+    $mpOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+    Write-Fail "Please email halil.houssein@aexinstitute.com.au with this screen."
+    exit 1
 }
-
-# Load existing settings if any, else start fresh
-if (Test-Path $SettingsPath) {
-    try {
-        $settings = Get-Content $SettingsPath -Raw | ConvertFrom-Json
-    } catch {
-        Write-Fail "Could not parse existing $SettingsPath. Please show this file to Halil and re-run."
-        exit 1
-    }
-} else {
-    $settings = New-Object PSObject
-}
-
-# Ensure extraKnownMarketplaces exists and add our entry
-if (-not ($settings.PSObject.Properties.Name -contains "extraKnownMarketplaces")) {
-    $settings | Add-Member -NotePropertyName "extraKnownMarketplaces" -NotePropertyValue (New-Object PSObject)
-}
-$existing = $settings.extraKnownMarketplaces.PSObject.Properties.Name
-if ($existing -contains $Marketplace) {
-    Write-Skip "Marketplace '$Marketplace' already registered"
-} else {
-    $entry = [PSCustomObject]@{
-        source = [PSCustomObject]@{
-            source = "github"
-            repo   = $PluginRepo
-        }
-    }
-    $settings.extraKnownMarketplaces | Add-Member -NotePropertyName $Marketplace -NotePropertyValue $entry
-    Write-OK "Added '$Marketplace' marketplace pointing at $PluginRepo"
-}
-
-# Save settings.json (UTF-8, no BOM)
-$json = $settings | ConvertTo-Json -Depth 10
-[System.IO.File]::WriteAllText($SettingsPath, $json, (New-Object System.Text.UTF8Encoding $false))
-Write-OK "Saved $SettingsPath"
+$mpOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+Write-OK "Marketplace '$Marketplace' registered"
 
 # -------------------------------------------------------------
-# 4. Final instructions for the staff member
+# 5. Install the plugin
+# -------------------------------------------------------------
+Write-Step "Installing the rto-rebrander plugin"
+
+$installOutput = & claude plugin install "$PluginName@$Marketplace" 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Fail "Could not install the plugin. Output:"
+    $installOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+    Write-Fail "Please email halil.houssein@aexinstitute.com.au with this screen."
+    exit 1
+}
+$installOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+Write-OK "Plugin installed and enabled"
+
+# -------------------------------------------------------------
+# 6. Final instructions
 # -------------------------------------------------------------
 Write-Host ""
 Write-Host "=============================================================" -ForegroundColor Yellow
-Write-Host "  Setup complete!" -ForegroundColor Yellow
+Write-Host "  All done!" -ForegroundColor Yellow
 Write-Host "=============================================================" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "ONE LAST STEP - please do this manually:" -ForegroundColor Yellow
+Write-Host "ONE LAST STEP:" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "  1. Open Claude Code Desktop"
-Write-Host "  2. In the chat input area, type:"
+Write-Host "  1. Close Claude Code Desktop completely"
+Write-Host "  2. Open it again"
+Write-Host "  3. The first time, you may see a one-time message about"
+Write-Host "     'installing Python packages' - this is normal and quick."
+Write-Host "  4. You can now ask Claude to rebrand documents!"
 Write-Host ""
-Write-Host "       /plugin install $PluginName@$Marketplace" -ForegroundColor White
-Write-Host ""
-Write-Host "  3. Wait for it to finish installing"
-Write-Host "  4. Close and re-open Claude Code Desktop"
-Write-Host "  5. You can now ask Claude to rebrand documents!"
+Write-Host "Example: just type or say something like:"
+Write-Host "  'Rebrand the docs in C:\BSI Documents to aEX branding'" -ForegroundColor White
 Write-Host ""
 Write-Host "If anything goes wrong, email halil.houssein@aexinstitute.com.au"
 Write-Host ""

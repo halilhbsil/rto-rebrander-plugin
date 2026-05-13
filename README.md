@@ -18,7 +18,7 @@ The rest of this document is a quick reference for the maintainer.
 
 ## Install (one-time)
 
-**Recommended (staff):** double-click `install.bat`, then inside Claude Code Desktop paste `/plugin install rto-rebrander@aex-internal`. See [STAFF-INSTALL.md](STAFF-INSTALL.md) for the full guide.
+**Recommended (staff):** double-click `install.bat` and restart Claude Code Desktop. No slash commands needed. See [STAFF-INSTALL.md](STAFF-INSTALL.md) for the full guide.
 
 **Manual (developer):**
 ```
