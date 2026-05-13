@@ -1,6 +1,6 @@
 {
   "name": "rto-rebrander",
-  "description": "Rebrand BSI Learning RTO documents to aEX Institute branding, preserving compliance metadata (unit codes, ASQA references, RTO 21371, version-history entries).",
+  "description": "aEX Institute internal tool. Rebrand BSI Learning RTO documents to aEX Institute branding, preserving compliance metadata (unit codes, ASQA references, RTO 21371, version-history entries). Specific to aEX Institute — not a generic rebrander.",
   "version": "1.3.0",
   "author": {
     "name": "aEX Institute",

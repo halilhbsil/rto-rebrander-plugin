@@ -1,6 +1,6 @@
 {
   "name": "aex-internal",
-  "description": "Internal aEX Institute plugin marketplace. Hosts RTO document tooling and related staff utilities. Not for external distribution.",
+  "description": "aEX Institute internal plugin marketplace. Hosts RTO document tooling and related staff utilities. Public repo for distribution convenience only — bundled assets are aEX-specific and not useful to anyone outside the organisation.",
   "owner": {
     "name": "aEX Institute",
     "email": "halil.houssein@aexinstitute.com.au"

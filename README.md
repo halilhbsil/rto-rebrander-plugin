@@ -1,8 +1,14 @@
 # aEX Internal Plugin Marketplace
 
-Internal Claude Code plugin marketplace for aEX Institute. Currently hosts one plugin: **rto-rebrander**, which rebrands BSI Learning RTO documents to aEX Institute branding.
+> **⚠️ aEX Institute internal tool — not useful to anyone else.**
+>
+> This repository is **public** purely so aEX Institute staff can install the plugin without needing a GitHub account. The contents (rebranding engine, bundled aEX logos, theme XML, brand template, fonts, and brand specification) are **specific to aEX Institute** and have **no general utility**. The find-and-replace direction is hardcoded BSI Learning → aEX Institute, the brand assets are aEX-licensed, and the compliance metadata refers to aEX's RTO number (21371) and ABN. If you arrived here from a search, this is not a generic RTO rebrander you can adapt — it's purpose-built for one organisation and one migration.
+>
+> The underlying *technique* (OOXML find-and-replace + template transplant with compliance-aware sentinels) might inform similar projects, but the actual code is not reusable as-is. Please do not fork.
 
-> Internal use only. Bundled assets (target template, aEX logos, fonts) are aEX-licensed and must not be distributed outside the organisation.
+---
+
+Internal Claude Code plugin marketplace for aEX Institute. Currently hosts one plugin: **rto-rebrander**, which rebrands BSI Learning RTO documents to aEX Institute branding.
 
 ## For staff
 

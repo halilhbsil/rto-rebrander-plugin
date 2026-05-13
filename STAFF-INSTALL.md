@@ -1,170 +1,85 @@
 # RTO Rebrander — Staff Install Guide
 
-This guide walks you through installing the **RTO Document Rebrander** as a Claude Code plugin on your work laptop. Once installed, you can ask Claude to rebrand BSI Learning documents to aEX Institute branding directly inside any Claude Code session, and the tool stays up to date automatically.
+> **For aEX Institute staff only.** This tool rebrands BSI Learning documents to our new aEX Institute branding. The repository is public for distribution convenience, but the contents are aEX-specific and have no use to anyone outside our organisation.
 
-> **Estimated time:** 10–15 minutes the first time.
-> **Audience:** aEX Institute staff. The plugin is internal-only and the GitHub repo it lives in is private.
+This guide walks you through installing the **RTO Document Rebrander** as a Claude Code plugin on your work laptop. The installer does almost all the work for you — you'll just need to double-click one file, then type one short line inside Claude Code.
 
----
-
-## What you need before you start
-
-Make sure all four of these are true on your laptop. If anything is missing, the relevant step below shows you how to install it.
-
-| Requirement | How to check | If missing |
-|---|---|---|
-| **Windows 10 or 11** | `winver` in Start menu | (You're fine if you have a recent work laptop) |
-| **Microsoft Word** | Already on staff laptops | Contact IT |
-| **Python 3.10 or newer** | Open PowerShell, run `python --version` | See Step 0 below |
-| **Claude Code Desktop** | You're reading this inside it, presumably | https://claude.com/code |
-
-You **do not** need to know how to code. Every step in this guide is copy-paste.
+> **Estimated time:** about 5 minutes.
 
 ---
 
-## Step 0 — Install Python (skip if you already have it)
+## What you need
 
-Open PowerShell (press **Win + X**, choose *Terminal* or *Windows PowerShell*) and run:
-
-```powershell
-python --version
-```
-
-If you see something like `Python 3.12.x`, you can skip to Step 1.
-
-If you see *"not recognized"* or a version below 3.10:
-
-1. Go to https://www.python.org/downloads/
-2. Click the big yellow **Download Python** button
-3. Run the installer
-4. **IMPORTANT:** On the first screen, tick the box that says **"Add Python to PATH"** before clicking Install
-5. Click *Install Now* and wait until it says *Setup was successful*
-6. Close PowerShell and reopen it, then run `python --version` again to confirm
-
----
-
-## Step 1 — Install the GitHub CLI
-
-The GitHub CLI is a tiny helper that lets Claude Code download the plugin from our internal GitHub. You install it once and never think about it again.
-
-1. Go to https://cli.github.com
-2. Click **Download for Windows**
-3. Run the installer (accept all defaults)
-4. Close PowerShell and reopen it
-5. Verify it worked:
-
-```powershell
-gh --version
-```
-
-You should see `gh version 2.x.x` or similar.
-
----
-
-## Step 2 — Sign in to GitHub
-
-Still in PowerShell:
-
-```powershell
-gh auth login
-```
-
-Answer the prompts:
-
-| Prompt | Choose |
+| Requirement | Already on your laptop? |
 |---|---|
-| Where do you use GitHub? | **GitHub.com** |
-| Preferred protocol for Git operations? | **HTTPS** |
-| Authenticate Git with your GitHub credentials? | **Y** (Yes) |
-| How would you like to authenticate? | **Login with a web browser** |
+| **Windows 10 or 11** | Yes (work laptop) |
+| **Microsoft Word** | Yes (work laptop) |
+| **Claude Code Desktop** | Yes (you're reading this in it, presumably) |
+| **Python 3.10+** | The installer will set this up for you if missing |
 
-A code will appear in PowerShell (something like `XXXX-XXXX`). PowerShell will then open your default browser to GitHub. Paste the code and click *Authorize*. Once you see *Congratulations, you're all set!* you can close the browser and return to PowerShell — you'll see a green tick `✓ Logged in as <your-github-username>`.
-
-> **Don't have a GitHub account yet?** Sign up at https://github.com/signup first (free, takes 30 seconds), then tell Halil your username so he can add you as a collaborator before you continue with Step 3.
+You **do not** need a GitHub account. You **do not** need to know any commands.
 
 ---
 
-## Step 3 — (Migration only) Remove the old skill
+## Step 1 — Run the installer
 
-**Only do this step if you previously installed the rebrander as a "skill" by unzipping it into your `.claude/skills/` folder.** If you've never installed the rebrander before, skip to Step 4.
+1. Halil has shared a file called **`install.bat`** with you (via SharePoint, Teams, or email).
+2. Save it somewhere you can find, such as your Desktop.
+3. **Double-click `install.bat`**.
+4. Windows will pop up a security prompt ("User Account Control"). Click **Yes** to allow it to run.
+5. A black PowerShell window will appear. Press any key when prompted.
 
-To remove the old version, paste this into PowerShell and press Enter:
+The installer will:
+- Check if you have Python 3.10+, and install it for you if you don't (this can take a minute)
+- Remove any older version of the rebrander you may have had
+- Tell Claude Code where to find the new plugin
 
-```powershell
-Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\skills\rto-document-rebrander"
-```
-
-You won't see any output — that means it worked. If you see *"Cannot find path..."*, the old version wasn't there, which is also fine.
+When it's finished, you'll see a yellow message that says **"Setup complete!"** with one last step to do inside Claude Code.
 
 ---
 
-## Step 4 — Install the plugin in Claude Code
+## Step 2 — Install the plugin in Claude Code
 
-Open Claude Code Desktop. In the chat input area, type these two commands one at a time (press Enter after each):
-
-```
-/plugin marketplace add halilhbsil/rto-rebrander-plugin
-```
-
-You should see a confirmation that the marketplace was added. Then:
+1. **Open Claude Code Desktop** (if it's already open, close and reopen it first so it picks up the new settings).
+2. In the chat input area at the bottom, type or paste this single line and press Enter:
 
 ```
 /plugin install rto-rebrander@aex-internal
 ```
 
-You'll see a brief installation message. **Now close and reopen Claude Code Desktop** — this is important. The first time the plugin loads, it installs a few small Python helpers in the background. You may see a one-time message that reads:
+3. Claude Code will download the plugin and confirm when it's done.
+4. **Close and reopen Claude Code Desktop** one more time. The first time the plugin runs, it quietly installs a few small Python helpers behind the scenes (you may see a one-time progress message — this only happens once).
 
-```
-[rto-rebrander] First-run setup: installing Python package(s)...
-[rto-rebrander] All dependencies installed successfully.
-```
-
-This takes about 30 seconds the first time and never appears again on subsequent sessions.
+That's it. The rebrander is now ready to use.
 
 ---
 
-## Step 5 — Verify it worked
+## Step 3 — Try it out
 
-In Claude Code, type `/` and look at the menu of available commands. You should see:
-
-```
-/rto-rebrander:rto-document-rebrander
-```
-
-You can also just ask Claude in plain English:
-
-> *"What does the rto-rebrander plugin do?"*
-
-Claude should respond with a summary of the rebrander's features.
-
----
-
-## Using the rebrander
-
-You **don't need to type slash commands** to use it. Just ask Claude in plain English. Examples:
+In any Claude Code conversation, just ask Claude in plain English. You don't need to remember any commands. Examples:
 
 - *"Rebrand all the docs in `C:\BSI Documents\Learner Guides` to aEX branding."*
 - *"Apply the new aEX template to this file: `C:\Documents\BSBOPS502 Learner Guide.docx`"*
-- *"Replace the BSI Learning logo with the aEX logo across this folder."*
+- *"Replace the BSI Learning logo with the aEX logo in this folder."*
 
-Claude reads your request, picks up that the rebrander applies, and runs it. Output goes to a folder called `rebranded/` next to each source file by default.
+Claude reads your request, picks up that the rebrander applies, and runs it. Output goes to a folder called **`rebranded/`** next to each source file.
 
-After the rebrand finishes, **always**:
-1. Open the `rebrand_report.md` file in the output folder
-2. Spot-check at least one document per family (learner guide, assessment tool, policy, handbook) before treating the whole batch as done
+After every batch, please:
+1. Open the **`rebrand_report.md`** file in the output folder
+2. Spot-check at least one document per family (learner guide, assessment tool, policy, handbook) before sending the batch on
 
 ---
 
 ## Updating to a new version (later)
 
-When a new version of the rebrander is released, you'll get a heads-up from Halil. To update, just run these two commands inside Claude Code:
+When a new version is released, you don't need to download anything. Just type two short lines in Claude Code:
 
 ```
 /plugin marketplace update
 /plugin update rto-rebrander
 ```
 
-Then close and reopen Claude Code Desktop. That's it — no re-downloading, no re-extracting zips.
+Then close and reopen Claude Code Desktop. Done.
 
 ---
 
@@ -172,12 +87,13 @@ Then close and reopen Claude Code Desktop. That's it — no re-downloading, no r
 
 | Problem | What to try |
 |---|---|
-| `/plugin marketplace add` says **"repository not found"** | You probably don't have access to the private GitHub repo yet. Email Halil your GitHub username so he can add you as a collaborator. |
-| `gh auth login` doesn't open a browser | Try `gh auth login --web` explicitly. If that still fails, ask Halil for a Personal Access Token method. |
-| Rebrander gives **"docx2pdf failed"** errors | Microsoft Word isn't installed or isn't licenced. The basic rebrand still works; only the `--also-export-pdf` option is unavailable. |
-| Rebrander says **"LibreOffice not detected"** | This is just a warning, not an error. You only need LibreOffice if you're processing very old (pre-2020) BSI docs with EMF logos. Most modern docs don't need it. |
-| Claude doesn't seem to recognise the rebrander | Type `/plugin list` to confirm `rto-rebrander` is enabled. If it isn't, run `/plugin enable rto-rebrander`. |
-| Anything else | Email Halil: halil.houssein@aexinstitute.com.au |
+| Double-clicking `install.bat` doesn't do anything | Right-click it, choose **Run as administrator**. |
+| Installer says **"winget unavailable"** | Your Windows is older than expected. Manually install Python from https://www.python.org/downloads/ (tick **"Add Python to PATH"** on the first screen), then re-run `install.bat`. |
+| `/plugin install` says **"plugin not found"** | The installer didn't finish properly. Run `install.bat` again first. |
+| Claude doesn't recognise the rebrander when you ask it to | Type `/plugin list` in Claude Code. If `rto-rebrander` is listed but not enabled, type `/plugin enable rto-rebrander`. If it's not listed at all, run `install.bat` again. |
+| Rebrander says **"docx2pdf failed"** | Microsoft Word isn't installed or isn't licenced. The basic rebrand still works; only the `--also-export-pdf` option is unavailable. Contact IT. |
+| Rebrander warns about **"LibreOffice not detected"** | This is just a warning, not an error. You only need LibreOffice for very old (pre-2020) BSI docs with EMF-format logos. Most modern docs don't need it. |
+| Anything else | Email **halil.houssein@aexinstitute.com.au** |
 
 ---
 
@@ -185,7 +101,7 @@ Then close and reopen Claude Code Desktop. That's it — no re-downloading, no r
 
 - The rebranding engine (Python scripts that surgically edit Word/PowerPoint XML)
 - The aEX brand template, logos, theme colours, and fonts
-- Compliance carve-outs that protect unit codes, ASQA references, RTO number, ABN, and version-history entries from being rewritten
+- Compliance carve-outs that protect unit codes, ASQA references, our RTO number (21371), our ABN, and version-history entries
 - A reference template (`aEX Institute LG Word Template May2026.docx`) used by the template-transplant strategy
 
-The plugin is internal-only and the bundled assets are aEX-licensed. **Do not share the GitHub repository link with anyone outside aEX Institute.**
+The plugin is **internal to aEX Institute**. Please don't share `install.bat` or the GitHub repository link with anyone outside aEX — while the contents are publicly accessible, they're tailored to our organisation and not useful elsewhere.
