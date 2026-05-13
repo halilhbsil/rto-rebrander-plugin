@@ -4,6 +4,12 @@ Internal Claude Code plugin marketplace for aEX Institute. Currently hosts one p
 
 > Internal use only. Bundled assets (target template, aEX logos, fonts) are aEX-licensed and must not be distributed outside the organisation.
 
+## For staff
+
+If you're aEX staff installing this for the first time, follow the **[STAFF-INSTALL.md](STAFF-INSTALL.md)** guide — it covers prerequisites (Python, GitHub CLI), GitHub access, migration from the old skill-based install, and verification.
+
+The rest of this document is a quick reference for the maintainer.
+
 ## Install (one-time)
 
 ```
