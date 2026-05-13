@@ -58,9 +58,12 @@ REM ============================================================
 #  RTO Rebrander - Updater (aEX Institute internal use)
 # =============================================================
 
-$ErrorActionPreference = "Stop"
+# Use Continue (not Stop) so native command stderr doesn't kill
+# the script before our explicit $LASTEXITCODE checks run.
+$ErrorActionPreference = "Continue"
 $Marketplace = "aex-internal"
 $PluginName  = "rto-rebrander"
+$PluginQualified = "${PluginName}@${Marketplace}"
 
 function Write-Step { param([string]$Message) Write-Host "`n>> $Message" -ForegroundColor Cyan }
 function Write-OK   { param([string]$Message) Write-Host "   [OK]   $Message" -ForegroundColor Green }
@@ -86,10 +89,11 @@ Write-OK "Found Claude Code at $($claudeCmd.Source)"
 Write-Step "Fetching the latest version info from GitHub"
 
 $mpOutput = & claude plugin marketplace update $Marketplace 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Fail "Could not refresh the marketplace. Output was:"
-    $mpOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+$mpExit = $LASTEXITCODE
+$mpOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+if ($mpExit -ne 0) {
     Write-Fail ""
+    Write-Fail "Could not refresh the marketplace."
     Write-Fail "This usually means the rebrander hasn't been installed yet."
     Write-Fail "Please run install.bat first, then try this updater again."
     exit 1
@@ -101,15 +105,16 @@ Write-OK "Marketplace refreshed"
 # -------------------------------------------------------------
 Write-Step "Installing the latest plugin version"
 
-$updateOutput = & claude plugin update $PluginName 2>&1
+$updateOutput = & claude plugin update $PluginQualified 2>&1
+$updateExit = $LASTEXITCODE
 $updateOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
 
-if ($LASTEXITCODE -ne 0) {
+if ($updateExit -ne 0) {
     Write-Fail "Plugin update failed. See output above."
     Write-Fail "Email the screen contents to halil.houssein@aexinstitute.com.au"
     exit 1
 }
-Write-OK "Plugin updated to the latest version"
+Write-OK "Plugin update check complete"
 
 # -------------------------------------------------------------
 # 4. Final instructions

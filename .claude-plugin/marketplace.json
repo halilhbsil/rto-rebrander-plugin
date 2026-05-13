@@ -10,7 +10,7 @@
       "name": "rto-rebrander",
       "source": "./plugins/rto-rebrander",
       "description": "Rebrand BSI Learning RTO documents (.docx/.pptx/.pdf) to aEX Institute branding while preserving compliance metadata.",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "author": {
         "name": "aEX Institute"
       }

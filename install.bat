@@ -73,10 +73,13 @@ REM ============================================================
 #    6. Tell the staff member to restart Claude Code Desktop
 # =============================================================
 
-$ErrorActionPreference = "Stop"
+# Use Continue (not Stop) so native command stderr doesn't kill
+# the script before our explicit $LASTEXITCODE checks run.
+$ErrorActionPreference = "Continue"
 $PluginRepo  = "halilhbsil/rto-rebrander-plugin"
 $Marketplace = "aex-internal"
 $PluginName  = "rto-rebrander"
+$PluginQualified = "${PluginName}@${Marketplace}"
 
 function Write-Step { param([string]$Message) Write-Host "`n>> $Message" -ForegroundColor Cyan }
 function Write-OK   { param([string]$Message) Write-Host "   [OK]   $Message" -ForegroundColor Green }
@@ -157,13 +160,13 @@ if (Test-Path $OldSkill) {
 Write-Step "Registering the aEX marketplace"
 
 $mpOutput = & claude plugin marketplace add $PluginRepo 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Fail "Could not register the marketplace. Output:"
-    $mpOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+$mpExit = $LASTEXITCODE
+$mpOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+if ($mpExit -ne 0) {
+    Write-Fail "Could not register the marketplace."
     Write-Fail "Please email halil.houssein@aexinstitute.com.au with this screen."
     exit 1
 }
-$mpOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
 Write-OK "Marketplace '$Marketplace' registered"
 
 # -------------------------------------------------------------
@@ -171,14 +174,14 @@ Write-OK "Marketplace '$Marketplace' registered"
 # -------------------------------------------------------------
 Write-Step "Installing the rto-rebrander plugin"
 
-$installOutput = & claude plugin install "$PluginName@$Marketplace" 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Fail "Could not install the plugin. Output:"
-    $installOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+$installOutput = & claude plugin install $PluginQualified 2>&1
+$installExit = $LASTEXITCODE
+$installOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+if ($installExit -ne 0) {
+    Write-Fail "Could not install the plugin."
     Write-Fail "Please email halil.houssein@aexinstitute.com.au with this screen."
     exit 1
 }
-$installOutput | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
 Write-OK "Plugin installed and enabled"
 
 # -------------------------------------------------------------
