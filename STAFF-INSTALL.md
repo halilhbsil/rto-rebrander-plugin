@@ -72,14 +72,18 @@ After every batch, please:
 
 ## Updating to a new version (later)
 
-When a new version is released, you don't need to download anything. Just type two short lines in Claude Code:
+When Halil releases a new version, updating is just as simple as installing — **no commands to type, just one double-click**.
 
-```
-/plugin marketplace update
-/plugin update rto-rebrander
-```
+1. **Close Claude Code Desktop completely** (right-click the system-tray icon → Quit if needed).
+2. Go to the same folder where you saved `install.bat` (Desktop, Downloads, wherever).
+3. **Double-click `update.bat`**.
+4. Click **Yes** on the security prompt.
+5. Press any key when asked, then wait for the *"Update complete!"* message.
+6. Open Claude Code Desktop again. The new version is now active.
 
-Then close and reopen Claude Code Desktop. Done.
+> **Note:** `update.bat` is shipped alongside `install.bat`. If you don't have it yet, Halil will share it via SharePoint/Teams the same way as `install.bat`. You only need to download it once — the same file works for all future updates.
+
+If `update.bat` says **"This usually means the rebrander hasn't been installed yet"**, run `install.bat` first.
 
 ---
 

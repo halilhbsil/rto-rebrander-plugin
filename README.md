@@ -18,23 +18,27 @@ The rest of this document is a quick reference for the maintainer.
 
 ## Install (one-time)
 
+**Recommended (staff):** double-click `install.bat`, then inside Claude Code Desktop paste `/plugin install rto-rebrander@aex-internal`. See [STAFF-INSTALL.md](STAFF-INSTALL.md) for the full guide.
+
+**Manual (developer):**
 ```
-/plugin marketplace add <git-url-of-this-repo>
+/plugin marketplace add halilhbsil/rto-rebrander-plugin
 /plugin install rto-rebrander@aex-internal
 ```
 
-After install, restart Claude Code once. The plugin's SessionStart hook will detect missing Python packages and install them automatically (`PyYAML`, `Pillow`, `imagehash`). You'll see progress lines in the terminal during first run, then subsequent sessions start silently.
+After install, restart Claude Code once. The plugin's SessionStart hook will detect missing Python packages and install them automatically (`PyYAML`, `Pillow`, `imagehash`, `docx2pdf`). You'll see progress lines in the terminal during first run, then subsequent sessions start silently.
 
 ## Update
 
-When a new version is released:
+**Recommended (staff):** double-click `update.bat`. It runs `claude plugin marketplace update aex-internal` and `claude plugin update rto-rebrander` for you. No commands to type.
 
+**Manual (developer):**
 ```
-/plugin marketplace update
+/plugin marketplace update aex-internal
 /plugin update rto-rebrander
 ```
 
-Both can also be triggered through the `/plugin` UI.
+Either way, close and reopen Claude Code Desktop after the update finishes — the new code only loads on session start.
 
 ## Requirements on the user's machine
 
