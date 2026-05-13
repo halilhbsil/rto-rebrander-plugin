@@ -23,8 +23,8 @@ You **do not** need a GitHub account. You **do not** need to know any commands.
 
 ## Step 1 — Run the installer
 
-1. Halil has shared a file called **`install.bat`** with you (via SharePoint, Teams, or email).
-2. Save it somewhere you can find, such as your Desktop.
+1. Halil has shared a single file called **`install.bat`** with you (via SharePoint, Teams, or email). Just one file — that's everything you need.
+2. Save it somewhere you can find, such as your Desktop or Downloads folder.
 3. **Double-click `install.bat`**.
 4. Windows will pop up a security prompt ("User Account Control"). Click **Yes** to allow it to run.
 5. A black PowerShell window will appear. Press any key when prompted.
@@ -75,13 +75,13 @@ After every batch, please:
 When Halil releases a new version, updating is just as simple as installing — **no commands to type, just one double-click**.
 
 1. **Close Claude Code Desktop completely** (right-click the system-tray icon → Quit if needed).
-2. Go to the same folder where you saved `install.bat` (Desktop, Downloads, wherever).
+2. Save **`update.bat`** somewhere (Desktop, Downloads — same as the installer; just one file).
 3. **Double-click `update.bat`**.
 4. Click **Yes** on the security prompt.
 5. Press any key when asked, then wait for the *"Update complete!"* message.
 6. Open Claude Code Desktop again. The new version is now active.
 
-> **Note:** `update.bat` is shipped alongside `install.bat`. If you don't have it yet, Halil will share it via SharePoint/Teams the same way as `install.bat`. You only need to download it once — the same file works for all future updates.
+> **Note:** `update.bat` is a separate single file. You can save it next to `install.bat` or in any folder you like — it works from anywhere. The same `update.bat` works for every future version (no need to re-download).
 
 If `update.bat` says **"This usually means the rebrander hasn't been installed yet"**, run `install.bat` first.
 
